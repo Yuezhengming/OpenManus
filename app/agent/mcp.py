@@ -90,7 +90,7 @@ class MCPAgent(ToolCallAgent):
         Returns:
             A tuple of (added_tools, removed_tools)
         """
-        if not self.mcp_clients.session:
+        if not self.mcp_clients.sessions:
             return [], []
 
         # Get current tool schemas directly from the server

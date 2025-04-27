@@ -1,3 +1,4 @@
+import logging
 import json
 import threading
 import tomllib
@@ -136,7 +137,7 @@ class MCPSettings(BaseModel):
 
                 for server_id, server_config in data.get("mcpServers", {}).items():
                     servers[server_id] = MCPServerConfig(
-                        type=server_config["type"],
+                        type=server_config["transportType"],
                         url=server_config.get("url"),
                         command=server_config.get("command"),
                         args=server_config.get("args", []),
@@ -158,6 +159,8 @@ class AppConfig(BaseModel):
         None, description="Search configuration"
     )
     mcp_config: Optional[MCPSettings] = Field(None, description="MCP configuration")
+    raw_config: dict = Field(default_factory=dict, description="Raw configuration data")
+
 
     class Config:
         arbitrary_types_allowed = True
@@ -198,6 +201,23 @@ class Config:
         config_path = self._get_config_path()
         with config_path.open("rb") as f:
             return tomllib.load(f)
+
+    def reload_config(self):
+        """Reload the configuration file into memory"""
+        logging.info("Reloading the configuration file...")
+        with self._lock:
+            try:
+                # Clear the current configuration
+                self._config = None
+                # Reload the configuration
+                self._load_initial_config()
+                logging.info("Configuration file reloaded successfully")
+                return True
+            except Exception as e:
+                logging.error(
+                    f"Failed to reload the configuration file: {str(e)}", exc_info=True
+                )
+                return False
 
     def _load_initial_config(self):
         raw_config = self._load_config()
@@ -281,6 +301,7 @@ class Config:
             "browser_config": browser_settings,
             "search_config": search_settings,
             "mcp_config": mcp_settings,
+            "raw_config": raw_config,  # save the original config
         }
 
         self._config = AppConfig(**config_dict)
@@ -315,6 +336,11 @@ class Config:
     def root_path(self) -> Path:
         """Get the root path of the application"""
         return PROJECT_ROOT
+
+    @property
+    def server_config(self):
+        """Get the server configuration"""
+        return self._config.raw_config.get("server", {})
 
 
 config = Config()
