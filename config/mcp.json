@@ -1,0 +1,46 @@
+{
+  "mcpServers": {
+    "mcp-server-hotnews": {
+      "autoApprove": [],
+      "disabled": true,
+      "timeout": 60,
+      "command": "npx",
+      "args": [
+        "-y",
+        "@wopal/mcp-server-hotnews"
+      ],
+      "transportType": "stdio"
+    },
+    "sequential-thinking": {
+      "autoApprove": [],
+      "disabled": false,
+      "timeout": 60,
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "transportType": "stdio"
+    },
+    "feishu_message_push": {
+      "autoApprove": [],
+      "disabled": true,
+      "timeout": 60,
+      "command": "node",
+      "args": [
+        "/Users/caiminghong/Code/02work/chanyou/AI/mcp-server-feishu/build/index.js"
+      ],
+      "transportType": "stdio"
+    },
+    "mcp-data-analysis-server": {
+      "autoApprove": [],
+      "disabled": false,
+      "timeout": 300,
+      "command": "node",
+      "args": [
+        "/Users/caiminghong/Code/02work/chanyou/AI/mcp-data-analysis-server/build/index.js"
+      ],
+      "transportType": "stdio"
+    }
+  }
+}
